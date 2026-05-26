@@ -7,12 +7,12 @@ script_dir = os.path.dirname(__file__)
 csv_path = os.path.join(script_dir, 'sales_data.csv')
 
 
-def total_sales():
+def total_revenue():
     with open(csv_path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         total = 0
         for row in reader:
-            total += int(row["quantity"])
+            total += int(row["amount"]) * int(row["quantity"])
     return total
 
 def sales_by_category():
@@ -67,7 +67,7 @@ def save_report():
     lines.append("============================")
     lines.append("ОТЧЁТ ПО ПРОДАЖАМ")
     lines.append("============================")
-    lines.append(f"Всего продано: {total_sales()} шт.")
+    lines.append(f"Всего выручки: {total_revenue()} руб.")
     lines.append("Продажи по категориям:")
     for category, quantity in sales_by_category().items():
         lines.append(f"  {category}: {quantity} шт.")
@@ -84,7 +84,7 @@ def save_report():
         f.write("\n".join(lines))
 
 if __name__ == "__main__":
-    print("Количество проданных товаров: ", total_sales())
+    print("Всего выручки: ", total_revenue())
     for category, quantity in sales_by_category().items():
         print(f"  {category}: {quantity} шт.")
     n = int(input("Введите количество самых продаваемых товаров для отображения: "))
