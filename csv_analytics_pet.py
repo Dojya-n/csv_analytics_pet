@@ -52,7 +52,7 @@ def max_sale_date():
             if quantity > max_quantity:
                 max_quantity = quantity
                 max_date = date
-    return max_date
+    return max_date.strftime("%d.%m.%Y")
 
 def lowest_selling_category():
     with open(csv_path, newline = '', encoding = "utf-8") as f:
@@ -61,6 +61,27 @@ def lowest_selling_category():
         for row in reader:
             category_sales[row["category"]] += int(row["quantity"])
     return min(category_sales, key=category_sales.get)
+
+def save_report():
+    lines = []
+    lines.append("============================")
+    lines.append("ОТЧЁТ ПО ПРОДАЖАМ")
+    lines.append("============================")
+    lines.append(f"Всего продано: {total_sales()} шт.")
+    lines.append("Продажи по категориям:")
+    for category, quantity in sales_by_category().items():
+        lines.append(f"  {category}: {quantity} шт.")
+    lines.append("Топ самых продаваемых товаров:")
+    n = int(input("Введите количество самых продаваемых товаров для записи в отчёт: "))
+    for product, quantity in top_products(n):
+        lines.append(f"  {product}: {quantity} шт.")
+    lines.append("Продажи по месяцам:")
+    for month, quantity in sales_by_month().items():
+        lines.append(f"  {month} : {quantity} шт.")
+    lines.append(f"Дата самой большой продажи: {max_sale_date()}")
+    lines.append(f"Категория с самыми низкими продажами: {lowest_selling_category()}")
+    with open("sales_report.txt", "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
 
 if __name__ == "__main__":
     print("Количество проданных товаров: ", total_sales())
@@ -77,3 +98,4 @@ if __name__ == "__main__":
     print(max_sale_date())
     print("Категория с самыми низкими продажами:")
     print(lowest_selling_category())
+    save_report()
